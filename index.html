@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Lager Pro</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.webmanifest" />
+  <meta name="theme-color" content="#05060a" />
+
+  <!-- iPhone Fullscreen -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Lager Pro" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+
+  <style>
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro", sans-serif;
+      background: #05060a;
+      color: #fff;
+      padding: 10px;
+    }
+
+    .app {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: 22px;
+    }
+
+    .card {
+      background: #0d0f18;
+      border: 1px solid #1f2433;
+      padding: 10px;
+      margin-bottom: 12px;
+      border-radius: 10px;
+    }
+
+    label {
+      display: block;
+      margin-top: 6px;
+      font-size: 13px;
+      opacity: 0.9;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 8px;
+      font-size: 14px;
+      margin-top: 3px;
+      border-radius: 8px;
+      border: 1px solid #222a40;
+      background: #080a12;
+      color: white;
+    }
+
+    textarea { resize: vertical; }
+
+    button {
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .btn-main {
+      background: #3ea6ff;
+      color: #000;
+      font-weight: 600;
+    }
+
+    .btn-ghost {
+      background: #12141f;
+      border: 1px solid #2a3147;
+      color: #ddd;
+    }
+
+    .list-item {
+      background: #0d0f18;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #1f2433;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .item-info {
+      max-width: 70%;
+    }
+
+    .item-name {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .item-small {
+      font-size: 12px;
+      opacity: 0.8;
+    }
+
+    .actions button {
+      margin-left: 4px;
+    }
+
+    .sum {
+      display: flex;
+      gap: 10px;
+      justify-content: space-between;
+      font-size: 14px;
+      margin-bottom: 10px;
+      opacity: 0.9;
+    }
+  </style>
+</head>
+
+<body>
+<div class="app">
+
+  <h1>Lager Pro</h1>
+
+  <div class="card">
+    <h2>Artikel anlegen</h2>
+
+    <form id="form">
+      <input type="hidden" id="id" />
+
+      <label>Artikelname *</label>
+      <input id="name" required />
+
+      <label>Artikelnummer</label>
+      <input id="sku" />
+
+      <label>Zustand</label>
+      <select id="condition">
+        <option value="">Auswählen…</option>
+        <option>Neu</option>
+        <option>Gebraucht</option>
+      </select>
+
+      <label>Größe</label>
+      <input id="size" />
+
+      <label>Wo gekauft</label>
+      <input id="where" />
+
+      <label>Menge *</label>
+      <input id="qty" type="number" value="1" />
+
+      <label>Einkaufspreis pro Stück (€)</label>
+      <input id="price" type="number" step="0.01" />
+
+      <label>Kaufdatum</label>
+      <input id="date" type="date" />
+
+      <label>Notiz</label>
+      <textarea id="notes"></textarea>
+
+      <label>Foto (optional)</label>
+      <input id="photo" type="file" accept="image/*" />
+
+      <button class="btn-main" type="submit" style="margin-top:10px;">Speichern</button>
+      <button class="btn-ghost" type="button" id="resetForm" style="margin-top:10px;">Neu / Leeren</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <h2>Lagerübersicht</h2>
+
+    <div class="sum">
+      <div>Artikel: <b id="sumItems">0</b></div>
+      <div>Menge: <b id="sumQty">0</b></div>
+      <div>Wert: <b id="sumValue">0,00 €</b></div>
+    </div>
+
+    <input type="text" id="search" placeholder="Suche…" style="margin-bottom:8px;" />
+
+    <div id="list"></div>
+  </div>
+<script>
+let items = JSON.parse(localStorage.getItem("lagerPro") || "[]");
+
+// --- Speicherfunktion ---
+function save() {
+  localStorage.setItem("lagerPro", JSON.stringify(items));
+}
+
+// --- Hilfsfunktionen ---
+function genId() {
+  return "itm_" + Date.now() + "_" + Math.random().toString(36).substr(2, 5);
+}
+
+// --- Renderfunktion ---
+function render() {
+  const list = document.getElementById("list");
+  const search = document.getElementById("search").value.toLowerCase();
+  list.innerHTML = "";
+
+  let sumItems = items.length;
+  let sumQty = 0;
+  let sumValue = 0;
+
+  items
+    .filter(i =>
+      (i.name + i.sku + i.where + i.condition + i.size)
+        .toLowerCase()
+        .includes(search)
+    )
+    .forEach(item => {
+      sumQty += Number(item.qty);
+      if (item.price) sumValue += item.qty * item.price;
+
+      const row = document.createElement("div");
+      row.className = "list-item";
+
+      const info = document.createElement("div");
+      info.className = "item-info";
+      info.innerHTML = `
+        <div class="item-name">${item.name}</div>
+        <div class="item-small">
+          ${item.sku ? "Art.-Nr.: " + item.sku + " · " : ""}
+          ${item.condition ? item.condition + " · " : ""}
+          ${item.where ? "gekauft: " + item.where : ""}
+        </div>
+        <div class="item-small">
+          Menge: ${item.qty}
+          ${item.price ? " · Gesamt: " + (item.qty * item.price).toFixed(2) + "€" : ""}
+        </div>
+      `;
+
+      const actions = document.createElement("div");
+      actions.className = "actions";
+
+      const editBtn = document.createElement("button");
+      editBtn.className = "btn-ghost";
+      editBtn.textContent = "Bearbeiten";
+      editBtn.onclick = () => fillForm(item.id);
+
+      const delBtn = document.createElement("button");
+      delBtn.className = "btn-ghost";
+      delBtn.textContent = "Löschen";
+      delBtn.onclick = () => {
+        if (confirm("Diesen Artikel löschen?")) {
+          items = items.filter(x => x.id !== item.id);
+          save();
+          render();
+        }
+      };
+
+      actions.appendChild(editBtn);
+      actions.appendChild(delBtn);
+
+      row.appendChild(info);
+      row.appendChild(actions);
+      list.appendChild(row);
+    });
+
+  document.getElementById("sumItems").textContent = sumItems;
+  document.getElementById("sumQty").textContent = sumQty;
+  document.getElementById("sumValue").textContent = sumValue.toFixed(2) + " €";
+}
+
+render();
+
+// --- Formular ausfüllen zum Bearbeiten ---
+function fillForm(id) {
+  const item = items.find(i => i.id === id);
+  if (!item) return;
+
+  document.getElementById("id").value = item.id;
+  document.getElementById("name").value = item.name;
+  document.getElementById("sku").value = item.sku;
+  document.getElementById("condition").value = item.condition;
+  document.getElementById("size").value = item.size;
+  document.getElementById("where").value = item.where;
+  document.getElementById("qty").value = item.qty;
+  document.getElementById("price").value = item.price;
+  document.getElementById("date").value = item.date;
+  document.getElementById("notes").value = item.notes;
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+// --- Formular speichern ---
+document.getElementById("form").addEventListener("submit", e => {
+  e.preventDefault();
+
+  const id = document.getElementById("id").value || genId();
+  const name = document.getElementById("name").value.trim();
+  if (!name) {
+    alert("Bitte einen Artikelnamen eingeben.");
+    return;
+  }
+
+  const newItem = {
+    id,
+    name,
+    sku: document.getElementById("sku").value.trim(),
+    condition: document.getElementById("condition").value,
+    size: document.getElementById("size").value.trim(),
+    where: document.getElementById("where").value.trim(),
+    qty: Number(document.getElementById("qty").value) || 1,
+    price: parseFloat(document.getElementById("price").value) || null,
+    date: document.getElementById("date").value,
+    notes: document.getElementById("notes").value.trim()
+  };
+
+  const index = items.findIndex(i => i.id === id);
+  if (index >= 0) {
+    items[index] = newItem;
+  } else {
+    items.push(newItem);
+  }
+
+  save();
+  render();
+  document.getElementById("form").reset();
+  document.getElementById("id").value = "";
+});
+
+// --- Formular leeren ---
+document.getElementById("resetForm").onclick = () => {
+  document.getElementById("form").reset();
+  document.getElementById("id").value = "";
+};
+
+// --- Suche ---
+document.getElementById("search").addEventListener("input", render);
+</script>
+<!-- PWA Service Worker Registrierung -->
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("sw.js").catch(err => {
+      console.log("SW Fehler:", err);
+    });
+  });
+}
+</script>
+
+</div>
+</body>
+</html>
