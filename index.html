@@ -6,338 +6,727 @@
 
   <title>Lager Pro</title>
 
-  <!-- PWA -->
+  <!-- PWA / iOS -->
   <link rel="manifest" href="manifest.webmanifest" />
   <meta name="theme-color" content="#05060a" />
-
-  <!-- iPhone Fullscreen -->
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Lager Pro" />
   <link rel="apple-touch-icon" href="icon-192.png" />
 
   <style>
+    :root {
+      --bg: #05060a;
+      --bg-card: #0d0f18;
+      --border: #1f2433;
+      --accent: #3ea6ff;
+      --accent-soft: rgba(62,166,255,0.2);
+      --danger: #ff4b5c;
+      --text: #f5f7ff;
+      --text-soft: #c0c4dd;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
     body {
       margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro", sans-serif;
-      background: #05060a;
-      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+      background: radial-gradient(circle at top, #171c2b 0, #05060a 40%, #020309 100%);
+      color: var(--text);
       padding: 10px;
+      display: flex;
+      justify-content: center;
     }
 
     .app {
+      width: 100%;
       max-width: 900px;
-      margin: auto;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
     }
 
     h1 {
-      margin: 0 0 10px;
+      margin: 0;
       font-size: 22px;
     }
 
+    .subtitle {
+      font-size: 11px;
+      color: var(--text-soft);
+    }
+
+    .badge {
+      font-size: 11px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(120,255,180,0.7);
+      background: rgba(30,190,120,0.15);
+      color: #d8ffe9;
+      white-space: nowrap;
+    }
+
     .card {
-      background: #0d0f18;
-      border: 1px solid #1f2433;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
       padding: 10px;
       margin-bottom: 12px;
-      border-radius: 10px;
+    }
+
+    h2 {
+      margin: 0 0 4px;
+      font-size: 17px;
     }
 
     label {
       display: block;
-      margin-top: 6px;
+      margin-top: 7px;
       font-size: 13px;
-      opacity: 0.9;
+      color: var(--text-soft);
     }
 
     input, select, textarea {
       width: 100%;
+      margin-top: 3px;
       padding: 8px;
       font-size: 14px;
-      margin-top: 3px;
       border-radius: 8px;
       border: 1px solid #222a40;
       background: #080a12;
-      color: white;
+      color: var(--text);
     }
 
-    textarea { resize: vertical; }
+    textarea { resize: vertical; min-height: 70px; }
 
-    button {
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: rgba(62,166,255,0.75);
+      box-shadow: 0 0 0 1px rgba(62,166,255,0.4);
+    }
+
+    .row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    @media (max-width: 600px) {
+      .row-2 { grid-template-columns: 1fr; }
+    }
+
+    .btn {
       padding: 8px 14px;
-      border-radius: 8px;
+      border-radius: 999px;
       border: none;
       cursor: pointer;
       font-size: 14px;
     }
 
     .btn-main {
-      background: #3ea6ff;
+      background: var(--accent);
       color: #000;
       font-weight: 600;
     }
 
     .btn-ghost {
       background: #12141f;
+      color: var(--text-soft);
       border: 1px solid #2a3147;
-      color: #ddd;
     }
 
-    .list-item {
-      background: #0d0f18;
-      padding: 10px;
+    .btn-small {
+      padding: 4px 8px;
+      font-size: 12px;
+      border-radius: 999px;
+      border: 1px solid #2a3147;
+      background: #090b14;
+      color: var(--text-soft);
+      cursor: pointer;
+    }
+
+    .btn-small.danger {
+      border-color: rgba(255,75,92,0.7);
+      color: #ffd5dd;
+    }
+
+    .btn-small.marked {
+      border-color: rgba(255,215,0,0.9);
+      background: rgba(255,215,0,0.18);
+      color: #fff4c4;
+    }
+
+    .btn + .btn {
+      margin-left: 6px;
+    }
+
+    .form-actions {
+      margin-top: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .sum-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    .sum-box {
+      flex: 1;
+      min-width: 120px;
+      padding: 6px 8px;
+      border-radius: 8px;
+      background: #101321;
+      border: 1px solid #262c44;
+      font-size: 13px;
+    }
+
+    .sum-label {
+      color: var(--text-soft);
+    }
+
+    .sum-value {
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    #search {
+      margin-bottom: 8px;
+    }
+
+    .item-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 60vh;
+      overflow-y: auto;
+    }
+
+    .item-row {
+      padding: 8px;
       border-radius: 8px;
       border: 1px solid #1f2433;
-      margin-bottom: 6px;
+      background: #090c18;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .item-row.marked {
+      border-color: rgba(255,215,0,0.9);
+      background: rgba(255,215,0,0.08);
+    }
+
+    .item-main {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .item-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 3px;
+    }
+
+    .item-line {
+      font-size: 12px;
+      color: var(--text-soft);
+      margin-bottom: 2px;
+    }
+
+    .item-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .empty {
+      font-size: 12px;
+      color: var(--text-soft);
+      text-align: center;
+      padding: 10px 4px;
+    }
+
+    /* simple Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    .modal {
+      max-width: 90%;
+      max-height: 90%;
+      background: #0d0f18;
+      border-radius: 10px;
+      border: 1px solid #2a3147;
+      padding: 10px;
+      color: var(--text);
+      overflow: auto;
+    }
+
+    .modal-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      margin-bottom: 6px;
     }
 
-    .item-info {
-      max-width: 70%;
-    }
-
-    .item-name {
+    .modal-header h3 {
+      margin: 0;
       font-size: 15px;
-      font-weight: 600;
     }
 
-    .item-small {
+    .modal-close {
+      border: none;
+      background: #12141f;
+      color: var(--text-soft);
+      border-radius: 999px;
+      padding: 4px 8px;
+      cursor: pointer;
       font-size: 12px;
-      opacity: 0.8;
     }
 
-    .actions button {
-      margin-left: 4px;
+    .modal img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 8px;
     }
 
-    .sum {
-      display: flex;
-      gap: 10px;
-      justify-content: space-between;
-      font-size: 14px;
-      margin-bottom: 10px;
-      opacity: 0.9;
-    }
   </style>
 </head>
-
 <body>
 <div class="app">
 
-  <h1>Lager Pro</h1>
+  <header>
+    <div>
+      <h1>Lager Pro</h1>
+      <div class="subtitle">Einfache Lagerverwaltung – alles untereinander</div>
+    </div>
+    <div class="badge">Offline · Nur dieses Gerät</div>
+  </header>
 
+  <!-- Formular -->
   <div class="card">
-    <h2>Artikel anlegen</h2>
+    <h2>Artikel anlegen / bearbeiten</h2>
 
     <form id="form">
       <input type="hidden" id="id" />
 
-      <label>Artikelname *</label>
-      <input id="name" required />
+      <label for="name">Artikelname *</label>
+      <input id="name" required placeholder="z.B. Jacke, Schuhe, Werkzeug …" />
 
-      <label>Artikelnummer</label>
-      <input id="sku" />
+      <label for="sku">Artikelnummer</label>
+      <input id="sku" placeholder="z.B. interne Nummer, EAN …" />
 
-      <label>Zustand</label>
-      <select id="condition">
-        <option value="">Auswählen…</option>
-        <option>Neu</option>
-        <option>Gebraucht</option>
-      </select>
+      <div class="row-2">
+        <div>
+          <label for="condition">Zustand</label>
+          <select id="condition">
+            <option value="">Auswählen…</option>
+            <option>Neu</option>
+            <option>Gebraucht</option>
+          </select>
+        </div>
+        <div>
+          <label for="size">Größe</label>
+          <input id="size" placeholder="z.B. M, 42, 1L …" />
+        </div>
+      </div>
 
-      <label>Größe</label>
-      <input id="size" />
+      <label for="where">Wo gekauft</label>
+      <input id="where" placeholder="z.B. Vinted, eBay, Laden …" />
 
-      <label>Wo gekauft</label>
-      <input id="where" />
+      <div class="row-2">
+        <div>
+          <label for="qty">Menge *</label>
+          <input id="qty" type="number" min="1" value="1" />
+        </div>
+        <div>
+          <label for="priceUnit">Einkaufspreis pro Stück (€)</label>
+          <input id="priceUnit" type="number" step="0.01" min="0" />
+        </div>
+      </div>
 
-      <label>Menge *</label>
-      <input id="qty" type="number" value="1" />
+      <label for="priceTotal">Einkaufspreis gesamt (€)</label>
+      <input id="priceTotal" type="number" step="0.01" min="0" />
 
-      <label>Einkaufspreis pro Stück (€)</label>
-      <input id="price" type="number" step="0.01" />
-
-      <label>Kaufdatum</label>
+      <label for="date">Wann gekauft</label>
       <input id="date" type="date" />
 
-      <label>Notiz</label>
-      <textarea id="notes"></textarea>
+      <label for="notes">Notiz</label>
+      <textarea id="notes" placeholder="Zustand, Besonderheiten, Seriennummer …"></textarea>
 
-      <label>Foto (optional)</label>
+      <label for="photo">Foto (optional)</label>
       <input id="photo" type="file" accept="image/*" />
 
-      <button class="btn-main" type="submit" style="margin-top:10px;">Speichern</button>
-      <button class="btn-ghost" type="button" id="resetForm" style="margin-top:10px;">Neu / Leeren</button>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-main">💾 Speichern</button>
+        <button type="button" id="resetForm" class="btn btn-ghost">Neu / Formular leeren</button>
+      </div>
     </form>
   </div>
 
+  <!-- Übersicht -->
   <div class="card">
     <h2>Lagerübersicht</h2>
 
-    <div class="sum">
-      <div>Artikel: <b id="sumItems">0</b></div>
-      <div>Menge: <b id="sumQty">0</b></div>
-      <div>Wert: <b id="sumValue">0,00 €</b></div>
+    <div class="sum-row">
+      <div class="sum-box">
+        <div class="sum-label">Artikel (Positionen)</div>
+        <div class="sum-value" id="sumItems">0</div>
+      </div>
+      <div class="sum-box">
+        <div class="sum-label">Gesamtmenge</div>
+        <div class="sum-value" id="sumQty">0</div>
+      </div>
+      <div class="sum-box">
+        <div class="sum-label">Gesamter Einkaufswert</div>
+        <div class="sum-value" id="sumValue">0,00 €</div>
+      </div>
     </div>
 
-    <input type="text" id="search" placeholder="Suche…" style="margin-bottom:8px;" />
+    <input id="search" placeholder="Suche nach Name, Nummer, Zustand, Ort …" />
 
-    <div id="list"></div>
+    <div class="item-list" id="list">
+      <div class="empty">Noch keine Artikel angelegt.</div>
+    </div>
   </div>
+
+  <!-- Modal für Notiz/Foto -->
+  <div class="modal-backdrop" id="modal-backdrop">
+    <div class="modal" id="modal">
+      <div class="modal-header">
+        <h3 id="modal-title"></h3>
+        <button class="modal-close" id="modal-close">Schließen</button>
+      </div>
+      <div id="modal-content"></div>
+    </div>
+  </div>
+
+</div>
+
 <script>
-let items = JSON.parse(localStorage.getItem("lagerPro") || "[]");
+const STORAGE_KEY = "lagerPro_v1";
+let items = [];
 
-// --- Speicherfunktion ---
+function load() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return [];
+    const data = JSON.parse(raw);
+    return Array.isArray(data) ? data : [];
+  } catch (e) {
+    console.error(e);
+    return [];
+  }
+}
+
 function save() {
-  localStorage.setItem("lagerPro", JSON.stringify(items));
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
 }
 
-// --- Hilfsfunktionen ---
 function genId() {
-  return "itm_" + Date.now() + "_" + Math.random().toString(36).substr(2, 5);
+  return "itm_" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 }
 
-// --- Renderfunktion ---
-function render() {
-  const list = document.getElementById("list");
-  const search = document.getElementById("search").value.toLowerCase();
-  list.innerHTML = "";
+// DOM
+const form = document.getElementById("form");
+const idInput = document.getElementById("id");
+const nameInput = document.getElementById("name");
+const skuInput = document.getElementById("sku");
+const conditionInput = document.getElementById("condition");
+const sizeInput = document.getElementById("size");
+const whereInput = document.getElementById("where");
+const qtyInput = document.getElementById("qty");
+const priceUnitInput = document.getElementById("priceUnit");
+const priceTotalInput = document.getElementById("priceTotal");
+const dateInput = document.getElementById("date");
+const notesInput = document.getElementById("notes");
+const photoInput = document.getElementById("photo");
 
-  let sumItems = items.length;
+const sumItemsEl = document.getElementById("sumItems");
+const sumQtyEl = document.getElementById("sumQty");
+const sumValueEl = document.getElementById("sumValue");
+const listEl = document.getElementById("list");
+const searchInput = document.getElementById("search");
+
+const modalBackdrop = document.getElementById("modal-backdrop");
+const modalTitle = document.getElementById("modal-title");
+const modalContent = document.getElementById("modal-content");
+const modalClose = document.getElementById("modal-close");
+
+// Modal-Funktionen
+function openModal(title, html) {
+  modalTitle.textContent = title;
+  modalContent.innerHTML = html;
+  modalBackdrop.style.display = "flex";
+}
+
+function closeModal() {
+  modalBackdrop.style.display = "none";
+  modalTitle.textContent = "";
+  modalContent.innerHTML = "";
+}
+
+modalClose.addEventListener("click", closeModal);
+modalBackdrop.addEventListener("click", (e) => {
+  if (e.target === modalBackdrop) closeModal();
+});
+
+// Render
+function render() {
+  const search = searchInput.value.trim().toLowerCase();
+  listEl.innerHTML = "";
+
+  if (!items.length) {
+    const div = document.createElement("div");
+    div.className = "empty";
+    div.textContent = "Noch keine Artikel angelegt.";
+    listEl.appendChild(div);
+  }
+
+  // Sortierung nach Kaufdatum (neu zuerst)
+  const sorted = items.slice().sort((a,b) => {
+    const da = a.date || "";
+    const db = b.date || "";
+    return db.localeCompare(da); // YYYY-MM-DD → lexikalisch = chronologisch
+  });
+
+  let sumItems = sorted.length;
   let sumQty = 0;
   let sumValue = 0;
 
-  items
-    .filter(i =>
-      (i.name + i.sku + i.where + i.condition + i.size)
-        .toLowerCase()
-        .includes(search)
-    )
+  sorted
+    .filter(it => {
+      if (!search) return true;
+      const blob = (it.name + " " + it.sku + " " + it.condition + " " + it.size + " " + it.where).toLowerCase();
+      return blob.includes(search);
+    })
     .forEach(item => {
-      sumQty += Number(item.qty);
-      if (item.price) sumValue += item.qty * item.price;
+      sumQty += item.qty || 0;
+      sumValue += item.totalPrice || 0;
 
       const row = document.createElement("div");
-      row.className = "list-item";
+      row.className = "item-row" + (item.flagged ? " marked" : "");
 
-      const info = document.createElement("div");
-      info.className = "item-info";
-      info.innerHTML = `
-        <div class="item-name">${item.name}</div>
-        <div class="item-small">
-          ${item.sku ? "Art.-Nr.: " + item.sku + " · " : ""}
-          ${item.condition ? item.condition + " · " : ""}
-          ${item.where ? "gekauft: " + item.where : ""}
-        </div>
-        <div class="item-small">
-          Menge: ${item.qty}
-          ${item.price ? " · Gesamt: " + (item.qty * item.price).toFixed(2) + "€" : ""}
-        </div>
-      `;
+      const main = document.createElement("div");
+      main.className = "item-main";
+
+      const title = document.createElement("div");
+      title.className = "item-title";
+      title.textContent = item.name;
+
+      const line1 = document.createElement("div");
+      line1.className = "item-line";
+      const bits1 = [];
+      if (item.sku) bits1.push("Art.-Nr.: " + item.sku);
+      if (item.condition) bits1.push(item.condition);
+      if (item.size) bits1.push("Größe: " + item.size);
+      if (item.where) bits1.push("gekauft: " + item.where);
+      line1.textContent = bits1.join(" · ") || "Keine weiteren Angaben";
+
+      const line2 = document.createElement("div");
+      line2.className = "item-line";
+      let preisTxt = "";
+      if (item.priceUnit != null) {
+        preisTxt += "Stück: " + item.priceUnit.toFixed(2) + " €";
+      }
+      if (item.totalPrice != null) {
+        if (preisTxt) preisTxt += " · ";
+        preisTxt += "Gesamt: " + item.totalPrice.toFixed(2) + " €";
+      }
+      line2.textContent = "Menge: " + (item.qty || 0) + (preisTxt ? " · " + preisTxt : "");
+
+      const line3 = document.createElement("div");
+      line3.className = "item-line";
+      line3.textContent = item.date ? ("Gekauft am " + item.date) : "";
+
+      main.appendChild(title);
+      main.appendChild(line1);
+      main.appendChild(line2);
+      if (line3.textContent) main.appendChild(line3);
 
       const actions = document.createElement("div");
-      actions.className = "actions";
+      actions.className = "item-actions";
 
-      const editBtn = document.createElement("button");
-      editBtn.className = "btn-ghost";
-      editBtn.textContent = "Bearbeiten";
-      editBtn.onclick = () => fillForm(item.id);
+      // Button: Markieren
+      const btnFlag = document.createElement("button");
+      btnFlag.className = "btn-small" + (item.flagged ? " marked" : "");
+      btnFlag.textContent = item.flagged ? "Markierung aus" : "Markieren";
+      btnFlag.addEventListener("click", (e) => {
+        e.stopPropagation();
+        item.flagged = !item.flagged;
+        save();
+        render();
+      });
 
-      const delBtn = document.createElement("button");
-      delBtn.className = "btn-ghost";
-      delBtn.textContent = "Löschen";
-      delBtn.onclick = () => {
-        if (confirm("Diesen Artikel löschen?")) {
+      // Button: Bearbeiten
+      const btnEdit = document.createElement("button");
+      btnEdit.className = "btn-small";
+      btnEdit.textContent = "Bearbeiten";
+      btnEdit.addEventListener("click", (e) => {
+        e.stopPropagation();
+        fillForm(item.id);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+
+      // Button: Notiz anzeigen
+      const btnNotes = document.createElement("button");
+      btnNotes.className = "btn-small";
+      btnNotes.textContent = "Notiz";
+      btnNotes.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const text = item.notes ? item.notes.replace(/\n/g,"<br>") : "<i>Keine Notiz vorhanden.</i>";
+        openModal("Notiz – " + item.name, "<p style='font-size:13px;'>" + text + "</p>");
+      });
+
+      // Button: Foto anzeigen
+      const btnPhoto = document.createElement("button");
+      btnPhoto.className = "btn-small";
+      btnPhoto.textContent = "Foto";
+      btnPhoto.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (!item.photo) {
+          openModal("Foto – " + item.name, "<p style='font-size:13px;'>Kein Foto hinterlegt.</p>");
+        } else {
+          openModal("Foto – " + item.name, "<img src='" + item.photo + "' alt='Foto' />");
+        }
+      });
+
+      // Button: Löschen
+      const btnDelete = document.createElement("button");
+      btnDelete.className = "btn-small danger";
+      btnDelete.textContent = "Löschen";
+      btnDelete.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (confirm("Diesen Artikel wirklich löschen?")) {
           items = items.filter(x => x.id !== item.id);
           save();
           render();
         }
-      };
+      });
 
-      actions.appendChild(editBtn);
-      actions.appendChild(delBtn);
+      actions.appendChild(btnFlag);
+      actions.appendChild(btnEdit);
+      actions.appendChild(btnNotes);
+      actions.appendChild(btnPhoto);
+      actions.appendChild(btnDelete);
 
-      row.appendChild(info);
+      row.appendChild(main);
       row.appendChild(actions);
-      list.appendChild(row);
+      listEl.appendChild(row);
     });
 
-  document.getElementById("sumItems").textContent = sumItems;
-  document.getElementById("sumQty").textContent = sumQty;
-  document.getElementById("sumValue").textContent = sumValue.toFixed(2) + " €";
+  sumItemsEl.textContent = sumItems;
+  sumQtyEl.textContent = sumQty;
+  sumValueEl.textContent = sumValue.toFixed(2).replace(".", ",") + " €";
 }
 
-render();
-
-// --- Formular ausfüllen zum Bearbeiten ---
+// Formular füllen
 function fillForm(id) {
-  const item = items.find(i => i.id === id);
-  if (!item) return;
+  const it = items.find(x => x.id === id);
+  if (!it) return;
 
-  document.getElementById("id").value = item.id;
-  document.getElementById("name").value = item.name;
-  document.getElementById("sku").value = item.sku;
-  document.getElementById("condition").value = item.condition;
-  document.getElementById("size").value = item.size;
-  document.getElementById("where").value = item.where;
-  document.getElementById("qty").value = item.qty;
-  document.getElementById("price").value = item.price;
-  document.getElementById("date").value = item.date;
-  document.getElementById("notes").value = item.notes;
-
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  idInput.value = it.id;
+  nameInput.value = it.name || "";
+  skuInput.value = it.sku || "";
+  conditionInput.value = it.condition || "";
+  sizeInput.value = it.size || "";
+  whereInput.value = it.where || "";
+  qtyInput.value = it.qty != null ? it.qty : 1;
+  priceUnitInput.value = it.priceUnit != null ? it.priceUnit : "";
+  priceTotalInput.value = it.totalPrice != null ? it.totalPrice : "";
+  dateInput.value = it.date || "";
+  notesInput.value = it.notes || "";
 }
 
-// --- Formular speichern ---
-document.getElementById("form").addEventListener("submit", e => {
+// Formular speichern
+form.addEventListener("submit", (e) => {
   e.preventDefault();
 
-  const id = document.getElementById("id").value || genId();
-  const name = document.getElementById("name").value.trim();
+  const name = nameInput.value.trim();
   if (!name) {
     alert("Bitte einen Artikelnamen eingeben.");
     return;
   }
 
-  const newItem = {
+  let qty = parseInt(qtyInput.value, 10);
+  if (!qty || qty < 1) qty = 1;
+
+  let priceUnit = priceUnitInput.value ? parseFloat(priceUnitInput.value) : null;
+  let priceTotal = priceTotalInput.value ? parseFloat(priceTotalInput.value) : null;
+
+  // Wenn nur eins der beiden Felder befüllt → das andere berechnen
+  if (priceUnit != null && (priceTotal == null || isNaN(priceTotal))) {
+    priceTotal = qty * priceUnit;
+  } else if ((priceUnit == null || isNaN(priceUnit)) && priceTotal != null) {
+    priceUnit = priceTotal / qty;
+  }
+
+  const id = idInput.value || genId();
+  const existingIndex = items.findIndex(x => x.id === id);
+
+  const item = {
     id,
     name,
-    sku: document.getElementById("sku").value.trim(),
-    condition: document.getElementById("condition").value,
-    size: document.getElementById("size").value.trim(),
-    where: document.getElementById("where").value.trim(),
-    qty: Number(document.getElementById("qty").value) || 1,
-    price: parseFloat(document.getElementById("price").value) || null,
-    date: document.getElementById("date").value,
-    notes: document.getElementById("notes").value.trim()
+    sku: skuInput.value.trim(),
+    condition: conditionInput.value,
+    size: sizeInput.value.trim(),
+    where: whereInput.value.trim(),
+    qty,
+    priceUnit: priceUnit != null && !isNaN(priceUnit) ? priceUnit : null,
+    totalPrice: priceTotal != null && !isNaN(priceTotal) ? priceTotal : null,
+    date: dateInput.value || "",
+    notes: notesInput.value.trim(),
+    flagged: existingIndex >= 0 ? items[existingIndex].flagged : false,
+    createdAt: existingIndex >= 0 ? (items[existingIndex].createdAt || new Date().toISOString()) : new Date().toISOString()
   };
 
-  const index = items.findIndex(i => i.id === id);
-  if (index >= 0) {
-    items[index] = newItem;
+  if (existingIndex >= 0) {
+    items[existingIndex] = item;
   } else {
-    items.push(newItem);
+    items.push(item);
   }
 
   save();
+  form.reset();
+  idInput.value = "";
   render();
-  document.getElementById("form").reset();
-  document.getElementById("id").value = "";
 });
 
-// --- Formular leeren ---
-document.getElementById("resetForm").onclick = () => {
-  document.getElementById("form").reset();
-  document.getElementById("id").value = "";
-};
+// Formular leeren
+document.getElementById("resetForm").addEventListener("click", () => {
+  form.reset();
+  idInput.value = "";
+});
 
-// --- Suche ---
-document.getElementById("search").addEventListener("input", render);
-</script>
-<!-- PWA Service Worker Registrierung -->
-<script>
+// Suche
+searchInput.addEventListener("input", () => render());
+
+// Initial laden
+items = load();
+render();
+
+// Service Worker für PWA registrieren
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker.register("sw.js").catch(err => {
@@ -346,7 +735,5 @@ if ("serviceWorker" in navigator) {
   });
 }
 </script>
-
-</div>
 </body>
 </html>
