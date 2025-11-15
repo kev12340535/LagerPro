@@ -1,0 +1,14 @@
+<!-- PWA Service Worker Registrierung -->
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("sw.js").catch(err => {
+      console.log("SW Fehler:", err);
+    });
+  });
+}
+</script>
+
+</div>
+</body>
+</html>
